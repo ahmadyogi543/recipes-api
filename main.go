@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -38,6 +39,7 @@ func init() {
 func main() {
 	router := gin.Default()
 	router.GET("/recipes", getAllRecipesHandler)
+	router.GET("/recipes/search", searchRecipesHandler)
 	router.POST("/recipes", addRecipeHandler)
 	router.PUT("/recipes/:id", updateHandler)
 	router.DELETE("/recipes/:id", deleteRecipeHandler)
@@ -63,6 +65,22 @@ func addRecipeHandler(c *gin.Context) {
 	recipes = append(recipes, recipe)
 
 	c.JSON(http.StatusCreated, recipe)
+}
+
+func searchRecipesHandler(c *gin.Context) {
+	tag := c.Query("tag")
+
+	filteredRecipes := make([]Recipe, 0)
+	for i := 0; i < len(recipes); i++ {
+		for _, t := range recipes[i].Tags {
+			if strings.EqualFold(t, tag) {
+				filteredRecipes = append(filteredRecipes, recipes[i])
+				break
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, filteredRecipes)
 }
 
 func updateHandler(c *gin.Context) {
