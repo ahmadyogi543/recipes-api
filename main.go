@@ -40,6 +40,7 @@ func main() {
 	router.GET("/recipes", getAllRecipesHandler)
 	router.POST("/recipes", addRecipeHandler)
 	router.PUT("/recipes/:id", updateHandler)
+	router.DELETE("/recipes/:id", deleteRecipeHandler)
 
 	router.Run()
 }
@@ -93,4 +94,28 @@ func updateHandler(c *gin.Context) {
 
 	recipes[index] = recipe
 	c.JSON(http.StatusOK, recipe)
+}
+
+func deleteRecipeHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	index := -1
+	for i := 0; i < len(recipes); i++ {
+		if recipes[i].ID == id {
+			index = i
+			break
+		}
+	}
+
+	if index == -1 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Recipe not found",
+		})
+		return
+	}
+
+	recipes = append(recipes[:index], recipes[index+1:]...)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Recipe has been deleted",
+	})
 }
