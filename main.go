@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -37,6 +38,9 @@ func init() {
 }
 
 func main() {
+	addr := flag.String("addr", ":5000", "HTTP network adress")
+	flag.Parse()
+
 	router := gin.Default()
 	router.GET("/recipes", getAllRecipesHandler)
 	router.GET("/recipes/search", searchRecipesHandler)
@@ -44,7 +48,7 @@ func main() {
 	router.PUT("/recipes/:id", updateHandler)
 	router.DELETE("/recipes/:id", deleteRecipeHandler)
 
-	router.Run()
+	router.Run(*addr)
 }
 
 func getAllRecipesHandler(c *gin.Context) {
