@@ -83,6 +83,24 @@
       }
     },
     "/recipes/{id}": {
+      "get": {
+        "description": "Returns recipe based on its id",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "recipes"
+        ],
+        "operationId": "getAllRecipes",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "Invalid recipe ID"
+          }
+        }
+      },
       "put": {
         "description": "Update an existing recipe",
         "produces": [

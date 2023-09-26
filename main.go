@@ -60,6 +60,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/recipes", getAllRecipesHandler)
+	router.GET("/recipes/:id", getRecipeHandler)
 	router.GET("/recipes/search", searchRecipesHandler)
 	router.POST("/recipes", addRecipeHandler)
 	router.PUT("/recipes/:id", updateHandler)
@@ -79,6 +80,37 @@ func main() {
 //		  description: Successful operation
 func getAllRecipesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, recipes)
+}
+
+// swagger:operation GET /recipes/{id} recipes getAllRecipes
+// Returns recipe based on its id
+// ---
+// produces:
+// - application/json
+// responses:
+//
+//		 '200':
+//			  description: Successful operation
+//	   '404':
+//	     description: Invalid recipe ID
+func getRecipeHandler(c *gin.Context) {
+	id := c.Param("id")
+	var recipe *Recipe
+
+	for i := 0; i < len(recipes); i++ {
+		if recipes[i].ID == id {
+			recipe = &recipes[i]
+		}
+	}
+
+	if recipe == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Recipe not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, recipe)
 }
 
 // swagger:operation POST /recipes recipes addRecipe
